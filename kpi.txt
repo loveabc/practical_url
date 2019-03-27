@@ -1,0 +1,33 @@
+
+This share includes 3 parts,
+first, the way how to calculate KPI
+second, problem in the present way
+last, how to solve the problem
+OK
+Just like this process graph
+some actions users take would update record status, and add a new action log to database, such as ops send to salesq, mark as completed
+and so on.
+Application only keeps the latest status and the only way to trace status changes is to look for action log,
+so we use action logs to calculate KPI.
+To improve performance of trend chart, we add calculation results to cache except result for this month and this week, because they 
+will be updated once user takes action.
+
+Application needs to calculate KPI for this month and this week when user opens KPI page every time.
+Because of huge amount of action logs and complex calculation, performance of KPI page is low.
+Logic of volume page is the same as KPI's, so its performance also is low.
+We have a plan to improve performance in future release.
+
+There are 2 ways to solve this problem.
+One is to exclude action logs for the day and refresh cache everyday automatically, 
+by this way, calculate result for this month and this week can add cache as other months and weeks,
+it is at least 20 times faster than before.
+This way has no effect on other parts of application and improve performance greatly, however, as I said just now,
+it will ignore action logs for current day.
+Another way is to refresh cache once updating status.It could also improve KPI page performance greatly.
+However, it has some effects on parts of application, and need many adjustments to application.
+It also may slow user's action down.
+
+I prefer the first one, in my view, it is acceptable to ignore action logs for the day to improve performance.
+Of course, it's up to you finally.
+
+

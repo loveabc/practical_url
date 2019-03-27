@@ -1,0 +1,30 @@
+The topic this share is calculation of KPI and volume.
+
+Application uses action audit log and record status to
+calculate KPI and volume.
+Just like this graph, application will add a new audit log 
+and update record status after user takes a action on OMCECN.
+Audit log keeps all actions,and we can trace record status
+changes for any day by these logs. And record status just keeps
+the lastest status.
+
+For some indicators, such as completed count in given time range 
+and other conditions, application use record status to calculate and 
+all need is only an addition,because once record is marked as completed, 
+its status cannot be changed.
+This calculation way is simple and high performance.
+
+Despite this way is very good, but for other indicators, such as percentage 
+of records actioned in each Q, application must use audit log to calculate,
+because we need get day when this record goes into SalesQ and leave from SalesQ,
+we cannot get these information only using the lastest status. 
+This calculation way is very complex.
+
+To improve performance, application add some results into cache.
+
+There is a problem current calculation way that performance is low.
+The main reason is the second way is complex and the quantity of audit log is huge.
+And as time goes on, the quantity is more and more, and performance is lower and lower.
+
+To solve this problem, we plan to pre-process audit log and save result to other tables,
+and we can get final result by only simpler calculation and less data.
