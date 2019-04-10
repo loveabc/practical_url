@@ -1,0 +1,47 @@
+I am pleasure to talk about calculation of KPI and volume, this talk includes 3 parts.
+first, the way to calculate KPI and volume
+second, problem in the present calculation
+last, how to solve the problem
+
+Just like this graph, application will add a new audit log 
+and update record status after user takes a action on OMCECN.
+Audit logs keep all actions,and we can trace status changes for any day using these logs. 
+However, record status just keep the latest status.
+
+For some indicators, we only need record status, such as time lapse, new record count in given time range.
+but for most indicators, we need past status, such as pending for enablement count,percentage of records actioned in each Q,
+so we use audit log as key data source,and record status as additional data source when calculate KPI and volume. 
+
+Here are 2 examples,
+first calculate time lapse using record status
+When calculate time lapse, we only need records which status are not completed, and then
+use current date minus/maines/ status date to get time lapse.
+This calculation is very simple and high performance.
+
+But for other indicators,we need get day when this record goes into Q and leaves from Q,
+this is second example, calculate percentage of records actioned in salesQ,
+when calculate percentage of records actioned in SalesQ in given time range,
+we need first get date when records go into salesQ,and then get date when they leave from salesQ,
+and finally get SLA use leave date minus entry date.
+we cannot get these information only using the lastest status,so we must get status date by audit log.
+this calculation is complex.
+
+let's go back to previous slide.
+using record status to calculate is high performance,
+and using audit log to calculate is low performance.
+
+To improve performance, we add some results into cache, like completed records count, new records count.
+
+Despite we add some results into cache,the performance is still low.
+The main reason is using audit log to calculate is complex and the quantity of audit log is huge.
+And as time goes on, the records are more and more, performance is lower and lower.
+
+To solve this problem, we plan to trace status change and pre-process audit log and then save result into database,
+When we calculate KPI and volume, we can get final results by simpler calculation and using less data.
+Of course, we also add some results into cache.
+
+By the way, we use c3 to draw chart, like pie chart, bar chart and line chart.
+
+Let me make a short summary, we use audit log and record status to calculate KPI and volume,
+using audit log to calculate is low performance, 
+and we have a plan to improve performance in future release by pre-processing audit log.
